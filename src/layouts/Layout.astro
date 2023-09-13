@@ -6,6 +6,8 @@ interface Props {
 }
 
 const { title } = Astro.props
+
+Astro.response.headers.set('Cache-Control', 'no-cache')
 ---
 
 <!doctype html>
