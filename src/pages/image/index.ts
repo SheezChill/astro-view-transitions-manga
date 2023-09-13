@@ -14,7 +14,7 @@ export const GET: APIRoute = async ({ request }) => {
   return new Response(stream, {
     headers: {
       'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=86400'
+      'Cache-Control': 'public, max-age=315360000'
     } satisfies HeadersInit
   })
 }
