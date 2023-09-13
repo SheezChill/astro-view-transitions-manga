@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  '@astrojs/deno':
+    specifier: ^5.0.0
+    version: 5.0.0(astro@3.0.8)
   '@astrojs/svelte':
     specifier: ^4.0.1
     version: 4.0.1(astro@3.0.8)(svelte@4.2.0)(typescript@5.2.2)(vite@4.4.9)
@@ -62,6 +65,15 @@ packages:
 
   /@astrojs/compiler@2.0.1:
     resolution: {integrity: sha512-DfBR7Cf+tOgQ4n7TIgTtU5x5SEA/08DNshpEPcT+91A0KbBlmUOYMBM/O6qAaHkmVo1KIoXQYhAmfdTT1zx9PQ==}
+    dev: false
+
+  /@astrojs/deno@5.0.0(astro@3.0.8):
+    resolution: {integrity: sha512-jvxPul1YrBaXxc0Y2QlVgqZvXcm2TUJvXzSLtx1KR75ACco7YTtm2C+xbXr4EYJHewMokoxnF48A3G03bn6xSQ==}
+    peerDependencies:
+      astro: ^3.0.0
+    dependencies:
+      astro: 3.0.8(sass@1.66.1)
+      esbuild: 0.19.2
     dev: false
 
   /@astrojs/internal-helpers@0.2.0:
