@@ -1,0 +1,29 @@
+---
+const lastVisitedCookie = Astro.cookies.get('lastVisited')?.json()
+const id = lastVisitedCookie?.id
+const cover = lastVisitedCookie?.cover
+---
+
+{
+  lastVisitedCookie && (
+    <a href={`/manga/${id}`}>
+      <img
+        transition:name={`cover-${id}`}
+        src={cover}
+        alt="manga cover"
+        class="fixed bottom-4 right-4 z-100"
+      />
+    </a>
+  )
+}
+
+<style>
+  img {
+    min-width: 12vw;
+    width: 12vw;
+    height: 18.75vw;
+    object-fit: cover;
+    border-radius: 1.04vw;
+    margin-bottom: 0.78125vw;
+  }
+</style>

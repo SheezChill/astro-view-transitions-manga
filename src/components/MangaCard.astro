@@ -1,0 +1,130 @@
+---
+const { author, artist, cover_url, title, id, tag } = Astro.props
+---
+
+<a class="manga-card" href={`/manga/${id}`}>
+  <img src={cover_url} alt="manga cover" transition:name={`cover-${id}`} />
+  <div class="title">
+    <h1 transition:name={`creators-${id}`}>
+      {author}, {artist}
+      <span>/</span>
+    </h1>
+    <h1 transition:name={`title-${id}`}>{title}</h1>
+  </div>
+  <div class="tag">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 36 36"
+      width="clamp(0.625rem, 0.73vw, 0.875rem)"
+      height="clamp(0.625rem, 0.73vw, 0.875rem)"
+    >
+      <path
+        fill="#FFD983"
+        d="M32.017 20.181L17.345 5.746C16.687 5.087 15.823 5 14.96 5H4.883C3.029 5 2 6.029 2 7.883v10.082c0 .861.089 1.723.746 2.38L17.3 35.017c1.311 1.31 3.378 1.31 4.688 0l10.059-10.088c1.31-1.312 1.28-3.438-.03-4.748zm-23.596-8.76c-.585.585-1.533.585-2.118 0s-.586-1.533 0-2.118c.585-.586 1.533-.585 2.118 0 .585.586.586 1.533 0 2.118z"
+      >
+      </path>
+      <path
+        fill="#D99E82"
+        d="M9.952 7.772c-1.43-1.431-3.749-1.431-5.179 0-1.431 1.43-1.431 3.749 0 5.18 1.43 1.43 3.749 1.43 5.18 0 1.43-1.431 1.429-3.749-.001-5.18zm-1.53 3.65c-.585.585-1.534.585-2.119 0-.585-.585-.586-1.534 0-2.119.585-.587 1.534-.585 2.119 0 .585.585.586 1.533 0 2.119z"
+      >
+      </path>
+      <path
+        fill="#C1694F"
+        d="M8.507 10.501c-.391.391-1.023.391-1.415 0-.391-.391-.39-1.023 0-1.414L15.577.602c.391-.391 1.023-.391 1.415 0 .391.391.39 1.023 0 1.414l-8.485 8.485z"
+      >
+      </path>
+    </svg>
+    <div class="label">
+      <span>genre:{' '}</span>
+      <span>{tag}</span>
+    </div>
+  </div>
+</a>
+
+<style lang="scss">
+  .manga-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 0 1rem;
+    text-decoration: none;
+    width: min-content;
+
+    @media (width <= 768px) {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    &:hover {
+      img {
+        scale: 1.02;
+      }
+    }
+
+    img {
+      width: 12vw;
+      height: 18.75vw;
+      object-fit: cover;
+      border-radius: 1.04vw;
+      transition: all 120ms ease-in-out;
+
+      @media (width <= 768px) {
+        width: 100%;
+        height: unset;
+        aspect-ratio: 23/36;
+      }
+    }
+
+    h1 {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: 'IBM Plex Mono';
+
+      &:first-of-type {
+        font: {
+          size: 0.75rem;
+          weight: 400;
+        }
+        color: hsl(218, 11%, 65%);
+
+        span {
+          color: hsl(216, 12%, 84%);
+        }
+      }
+
+      &:last-of-type {
+        font: {
+          size: 0.75rem;
+          weight: 600;
+        }
+        color: black;
+      }
+    }
+
+    .tag {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0 0.5rem;
+      width: fit-content;
+      border: #f3f4f6 solid 1px;
+      border-radius: 999px;
+      gap: 8px;
+
+      span {
+        font-size: clamp(0.625rem, 0.73vw, 0.875rem);
+
+        &:first-of-type {
+          color: hsl(218, 11%, 65%);
+        }
+
+        &:last-of-type {
+          color: hsl(217, 19%, 27%);
+        }
+      }
+    }
+  }
+</style>

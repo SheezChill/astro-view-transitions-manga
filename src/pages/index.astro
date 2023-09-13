@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro'
+import MangaCard from '../components/MangaCard.astro'
+
+import type { MangaArray } from '../mdapi'
+
+const oneDayMilliseconds = 1000 * 3600 * 24
+const createdAtSinceDeltaMillis = oneDayMilliseconds * 30
+const createdAtSince = new Date(new Date().valueOf() - createdAtSinceDeltaMillis)
+  .toISOString()
+  .slice(0, -5)
+
+const data: MangaArray<'author' | 'artist' | 'cover_art'> = await fetch!(
+  `https://api.mangadex.org/manga?limit=20&includes[]=cover_art&includes[]=artist&includes[]=author&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&hasAvailableChapters=true&createdAtSince=${createdAtSince}`
+).then((res) => res.json())
+---
+
+<Layout title="Astro manga">
+  <div class="manga-list">
+    {
+      data.data.map((manga) => (
+        <MangaCard
+          author={manga.relationships[0].attributes.name}
+          artist={manga.relationships[1].attributes.name}
+          title={manga.attributes.title.en}
+          cover_url={`${
+            import.meta.env.PUBLIC_IMAGE_PROXY ?? ''
+          }https://uploads.mangadex.org/covers/${manga.id}/${
+            manga.relationships.find((rel) => rel.type === 'cover_art')!.attributes
+              .fileName
+          }.256.jpg`}
+          tag={
+            manga.attributes.tags.filter((tag) => tag.attributes.group === 'genre')[0]
+              ?.attributes.name.en || 'Unknown'
+          }
+          id={manga.id}
+        />
+      ))
+    }
+  </div>
+</Layout>
+
+<script is:inline>
+  document.cookie = 'lastVisited=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+</script>
+
+<style>
+  .manga-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8vw;
+    margin: 0 9.375vw;
+    margin-top: 0.9375rem;
+
+    @media (width <= 768px) {
+      @apply grid grid-cols-2;
+    }
+  }
+</style>

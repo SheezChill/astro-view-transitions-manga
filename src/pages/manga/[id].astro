@@ -1,0 +1,389 @@
+---
+import Chapters from '../../components/Chapters.svelte'
+import Layout from '../../layouts/Layout.astro'
+
+import {buyLinkMap} from '../../static/buyLinkMap'
+
+import Star from '../../static/icons/star.svg?raw'
+import Bookmark from '../../static/icons/bookmark.svg?raw'
+import Chapter from '../../static/icons/chapter.svg?raw'
+
+import type { MangaWithRelationship, MangaStatisticsAdvanced } from '../../mdapi'
+
+const { id } = Astro.params
+
+const chapterData = await fetch(`https://api.mangadex.org/manga/${id}/feed?translatedLanguage[]=en&includes[]=scanlation_group&includes[]=user`).then(res=>res.json())
+
+const data: MangaWithRelationship<'author' | 'artist' | 'cover_art'> = await fetch(
+  `https://api.mangadex.org/manga/${id}?includes[]=author&includes[]=artist&includes[]=cover_art`
+).then((res) => res.json())
+
+const mangaAttributes = data.data.attributes
+const mangaRelationships = data.data.relationships
+
+const statistics: MangaStatisticsAdvanced = await fetch(`https://api.mangadex.org/statistics/manga/${id}`).then(res => res.json())
+
+const numberFormatter = Intl.NumberFormat('en', {notation: 'compact'})
+const bookmarks =  numberFormatter.format( statistics.statistics[id!].follows )
+const rating =  statistics.statistics[id!].rating.bayesian.toFixed(2)
+
+const author = mangaRelationships[0].attributes.name
+const artist = mangaRelationships[1].attributes.name
+const title = mangaAttributes.title.en
+const cover = `${import.meta.env.PUBLIC_IMAGE_PROXY ?? ''}https://uploads.mangadex.org/covers/${data.data.id}/${
+  data.data.relationships.find((rel) => rel.type === 'cover_art')!.attributes.fileName
+}.256.jpg`
+const description = mangaAttributes.description.en
+
+const buyingLinks = Object.entries(mangaAttributes.links).filter((link) =>
+  ['raw', 'engtl', 'bw', 'amz', 'ebj', 'cdj'].includes(link[0])
+)
+const contentRating = mangaAttributes.contentRating
+const demographic = mangaAttributes.publicationDemographic
+const genres = mangaAttributes.tags.filter((tag) => tag.attributes.group === 'genre')
+const themes = mangaAttributes.tags.filter((tag) => tag.attributes.group === 'theme')
+---
+
+<Layout title="Manga">
+  <div class="background">
+    <div class="container">
+      <img src={cover} alt="manga cover" transition:name={`cover-${id}`} />
+      <div class="wrap">
+        <div class="info" >
+          <div class="title-wrapper">
+            <h1 transition:name={`creators-${id}`}>
+              {author}, {artist}
+              <span>/</span>
+            </h1>
+            <h1 transition:name={`title-${id}`}>{title}</h1>
+          </div>
+          <div class="actions">
+            <div class="action-button">
+              <div >
+                <Fragment set:html={Star} />
+                Rate
+              </div>
+              <div >
+                {rating} 
+              </div>
+            </div> 
+            <div class="action-button">
+              <div >
+                <Fragment set:html={Bookmark} />
+                Bookmark
+              </div>
+              <div >
+                {bookmarks} 
+              </div>
+            </div> 
+          </div>
+          <div class="tags">
+            <span class={`content-rating ${contentRating}`}>
+              {contentRating}
+            </span>
+            {
+              demographic &&
+              <span class="demographic">
+                {demographic}
+              </span>
+            }
+            {
+              buyingLinks.map(link => {
+                const type = link[0]              
+                const value = link[1]
+              
+                return (
+                  <a href={value} target="_blank" class={`buylink ${type}`}>
+                    <Fragment set:html={buyLinkMap[type].icon} />
+                    {buyLinkMap[type].label}
+                  </a>
+                ) 
+              })
+            }
+            {
+              themes.map((theme) => (
+                <span class="genre">
+                  <div class="label">
+                    <span>theme: </span>
+                    <span>{theme.attributes.name.en}</span>
+                  </div>
+                </span>
+              ))
+            }{
+              genres.map((genre) => (
+                <span class="genre">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 36 36"
+                    width="0.75rem"
+                    height="0.75rem"
+                  >
+                    <path
+                      fill="#D99E82"
+                      d="M9.952 7.772c-1.43-1.431-3.749-1.431-5.179 0-1.431 1.43-1.431 3.749 0 5.18 1.43 1.43 3.749 1.43 5.18 0 1.43-1.431 1.429-3.749-.001-5.18zm-1.53 3.65c-.585.585-1.534.585-2.119 0-.585-.585-.586-1.534 0-2.119.585-.587 1.534-.585 2.119 0 .585.585.586 1.533 0 2.119z"
+                    />
+                      <path
+                        fill="#FFD983"
+                        d="M32.017 20.181L17.345 5.746C16.687 5.087 15.823 5 14.96 5H4.883C3.029 5 2 6.029 2 7.883v10.082c0 .861.089 1.723.746 2.38L17.3 35.017c1.311 1.31 3.378 1.31 4.688 0l10.059-10.088c1.31-1.312 1.28-3.438-.03-4.748zm-23.596-8.76c-.585.585-1.533.585-2.118 0s-.586-1.533 0-2.118c.585-.586 1.533-.585 2.118 0 .585.586.586 1.533 0 2.118z"
+                      />
+                      <path
+                        fill="#C1694F"
+                        d="M8.507 10.501c-.391.391-1.023.391-1.415 0-.391-.391-.39-1.023 0-1.414L15.577.602c.391-.391 1.023-.391 1.415 0 .391.391.39 1.023 0 1.414l-8.485 8.485z"
+                      />
+                    </F>
+                  </svg>
+                  <div class="label">
+                    <span>genre: </span>
+                    <span>{genre.attributes.name.en}</span>
+                  </div>
+                </span>
+              ))
+            }
+          </div>
+        </div>
+        <p class="description">
+          {description}
+        </p>
+        <div class="bottom">
+          <div class="tabs">
+            <div class="tab">
+              <Fragment set:html={Chapter} /> 
+              <span>Chapters</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <Chapters client:load chapterData={chapterData}/>
+</Layout>
+
+<script is:inline define:vars={{ cover, id }}>
+document.cookie=`lastVisited=${JSON.stringify({cover, id})}; path=/`
+</script>
+
+<style lang="scss">
+  .background {
+    border: 1px solid hsl(220, 14%, 96%);
+    background: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(270, 20%, 98%) 100%);
+  }
+
+  .container {
+    margin: 0.78125vw 9.375vw;
+    margin-bottom: 0;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 2.1vw;
+  }
+
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2.08vw;
+    min-height: 100%;
+    justify-content: space-between;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.04vw;
+  }
+  
+  .description {
+    line-height: 1.75;
+    color: hsl(215, 14%, 34%);
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  
+  .bottom {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .tabs {
+    .tab {
+      display: flex;  
+      flex-direction: row;
+      gap: 0.625rem;
+      padding: 0.625rem 0.875rem;
+      border-bottom: hsl(217, 19%, 27%) 2px solid;
+    }
+  }
+
+  .title-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: fit-content;
+  }
+  
+  .actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.625rem;
+  }
+  
+  .action-button {
+    display: flex;
+    flex-direction: row;
+    border: hsl(220, 14%, 96%) solid 1px;
+    border-radius: .375rem;
+    overflow: hidden;
+    width: fit-content;
+
+    div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0.25rem 0.375rem;
+      font-size: 0.875rem;
+      gap: 0.25rem;
+      color: hsl(220, 9%, 46%);
+
+      &:last-of-type {
+        border-left: hsl(220, 14%, 96%) solid 1px;
+        color: hsl(218, 11%, 65%);
+      }
+    }
+  }
+  
+  .content-rating {
+    display: flex;
+    align-items: center;
+    color: hsl(var(--hue), 69%, 42%);
+    background: linear-gradient(180deg, hsl(var(--hue), 100%, 98%) 0%, hsl(var(--hue), 100%, 88%) 100%);
+    padding: .5rem 0.125rem;
+    border-radius: .5rem;
+    font-size: 0.875rem;
+    height: 1.75rem;
+    box-sizing: border-box;
+    padding: 0 .5rem;
+    text-transform: capitalize;
+    
+    &.safe {
+      --hue: 119;
+    }
+    
+    &.suggestive {
+      --hue: 36;
+    }
+    
+    &.erotica {
+      --hue: 0;
+    }
+    
+    &.pornographic {
+      --hue: 288;
+    }
+  }
+  
+  .demographic {
+    display: flex;
+    align-items: center;
+    color: #374151;
+    font-size: 0.875rem;
+    height: 1.75rem;
+    border: #F3F4F6 solid 1px;
+    padding: 0 .5rem;
+    text-transform: capitalize;
+  }
+  
+  .buylink {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 .5rem;
+    height: 1.75rem;
+    box-sizing: border-box;
+    gap: .5rem;
+    border-radius: .5rem;
+    background: hsl(263, 100%, 98%);
+    color: hsl(263, 69%, 42%);
+    font-size: 0.875rem;
+    text-decoration: none;
+    
+    &.bw {
+      background: hsl(119, 100%, 98%);
+      color: hsl(119, 69%, 42%);
+    }
+
+    &.amz {
+      background: hsl(58, 100%, 98%);
+      color: hsl(58, 69%, 42%);
+    }
+
+    &.ebj {
+      background: hsl(18, 100%, 98%);
+      color: hsl(18, 69%, 42%);
+    }
+
+    &.cdj {
+      background: hsl(216, 100%, 98%);
+      color: hsl(216, 69%, 42%);
+    }
+  }
+
+  .tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+
+    .genre {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0 0.5rem;
+      width: fit-content;
+      border: #f3f4f6 solid 1px;
+      border-radius: 999px;
+      gap: 8px;
+      // height: 1.75rem;
+
+      span {
+        font-size: 0.875rem;
+
+        &:first-of-type {
+          color: hsl(218, 11%, 65%);
+        }
+
+        &:last-of-type {
+          color: hsl(217, 19%, 27%);
+        }
+      }
+    }
+  }
+
+  h1 {
+    display: inline;
+    overflow: hidden;
+    font-family: 'IBM Plex Mono';
+    font-size: 1.25rem;
+
+    &:first-of-type {
+      font: {
+        weight: 400;
+      }
+      color: #9ca3af;
+
+      span:first-of-type {
+        color: hsl(216, 12%, 84%);
+      }
+    }
+  }
+
+  img {
+    min-width: 12vw;
+    width: 12vw;
+    height: 18.75vw;
+    object-fit: cover;
+    border-radius: 1.04vw;
+    margin-bottom: 0.78125vw;
+  }
+</style>

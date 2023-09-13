@@ -1,0 +1,38 @@
+---
+import type { TransitionAnimationPair, TransitionDirectionalAnimations } from 'astro'
+import Layout from '../../layouts/Layout.astro'
+import Display from '../../components/Display.astro'
+
+const anim: TransitionAnimationPair = {
+  old: {
+    name: 'fadeSlideOut',
+    duration: '0.1s',
+    easing: 'linear',
+    fillMode: 'forwards'
+  },
+  new: {
+    name: 'fadeSlideIn',
+    duration: '0.1s',
+    easing: 'linear',
+    fillMode: 'backwards'
+  }
+}
+
+const myFade: TransitionDirectionalAnimations = {
+  forwards: anim,
+  backwards: anim
+}
+---
+
+<Layout title="Settings">
+  <div class="container">
+    <h1 transition:animate={myFade}>Settings</h1>
+  </div>
+  <Display />
+</Layout>
+
+<style lang="scss">
+  .container {
+    @apply flex flex-col mx-[10.2vw];
+  }
+</style>
