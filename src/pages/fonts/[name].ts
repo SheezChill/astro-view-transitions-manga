@@ -9,11 +9,9 @@ export const GET: APIRoute = async ({ params, request }) => {
   const res = await fetch(`${url.origin}/font/${fontName}`)
   const stream = res.body
 
-  const contentType = res.headers.get('Content-Type')!
-
   return new Response(stream, {
     headers: {
-      'Content-Type': contentType,
+      'Content-Type': 'font/woff2',
       'Cache-Control': 'public, max-age=315360000'
     } satisfies HeadersInit
   })
