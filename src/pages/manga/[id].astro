@@ -30,7 +30,7 @@ const rating =  statistics.statistics[id!].rating.bayesian.toFixed(2)
 const author = mangaRelationships[0].attributes.name
 const artist = mangaRelationships[1].attributes.name
 const title = mangaAttributes.title.en
-const cover = `${Deno.env.get("PUBLIC_IMAGE_PROXY") ?? ''}https://uploads.mangadex.org/covers/${data.data.id}/${
+const cover = `/image?url=https://uploads.mangadex.org/covers/${data.data.id}/${
   data.data.relationships.find((rel) => rel.type === 'cover_art')!.attributes.fileName
 }.256.jpg`
 const description = mangaAttributes.description.en
