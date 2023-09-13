@@ -12,7 +12,7 @@ export const GET: APIRoute = async ({ params, request }) => {
   return new Response(fontFile, {
     headers: {
       'Content-Type': 'font/woff2',
-      'Cache-Control': 'public, max-age=315360000'
+      'Cache-Control': 'public, max-age=315360000, immutable'
     } satisfies HeadersInit
   })
 }
