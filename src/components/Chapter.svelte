@@ -16,9 +16,9 @@
   </div>
   <div class="info">
     <div class="uploader">
-      <span>{chapterData.group}</span>
+      <span>{chapterData.uploaderGroup.name}</span>
       <span>/</span>
-      <span>{chapterData.user}</span>
+      <span>{chapterData.uploader.name}</span>
     </div>
   </div>
 </div>

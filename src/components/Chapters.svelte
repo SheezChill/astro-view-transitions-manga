@@ -4,23 +4,41 @@
 
   export let chapterData
 
-  const chapters = chapterData.data.map((manga) => {
-    return {
-      chapter: manga.attributes.chapter,
-      title: manga.attributes.title ?? '',
-      group:
-        manga.relationships.find((rel) => rel.type === 'scanlation_group')?.attributes
-          ?.name ?? 'No Group',
-      user:
-        manga.relationships.find((rel) => rel.type === 'user')?.attributes?.username ??
-        'Anonymous',
-      createdAt: manga.attributes.createdAt
-    }
+  const volumeMap = new Map()
+  const volumes = new Set(chapterData.data.map((manga) => manga.attributes.volume))
+  for (const volume of volumes) {
+    volumeMap.set(volume, [])
+  }
+  chapterData.data.forEach(({ attributes, relationships }) => {
+    const group = relationships.find((rel) => rel.type === 'scanlation_group')
+    const user = relationships.find((rel) => rel.type === 'user')
+
+    volumeMap.get(attributes.volume).push({
+      chapter: attributes.chapter,
+      title: attributes.title,
+      uploaderGroup: {
+        name: group?.attributes?.name ?? 'No Group',
+        id: group?.id ?? ''
+      },
+      uploader: {
+        name: user?.attributes?.username ?? 'Anonymous',
+        id: user.id
+      }
+    })
   })
+  let items = [...volumeMap].map((item) => ({
+    volume: item[0],
+    chapters: item[1]
+  }))
+
+  function reverse() {
+    // TODO: REFETCH THE FEEDS ENDPOINT WITH ORDER=DESC
+    items = items.reverse()
+  }
 </script>
 
 <div class="chapters-container">
-  <button>
+  <button on:click={reverse}>
     <span>
       {@html ArrowDown}
     </span>
@@ -28,9 +46,11 @@
   </button>
 
   <div class="volume-container">
-    <span class="volume">No Volume</span>
-    {#each chapters as chapter}
-      <Chapter chapterData={chapter} />
+    {#each items as item}
+      <span class="volume">{item.volume ?? 'No Volume'}</span>
+      {#each item.chapters as chapter}
+        <Chapter chapterData={chapter} />
+      {/each}
     {/each}
   </div>
 </div>

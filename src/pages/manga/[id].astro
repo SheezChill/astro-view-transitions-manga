@@ -12,7 +12,7 @@ import type { MangaWithRelationship, MangaStatisticsAdvanced } from '../../mdapi
 
 const { id } = Astro.params
 
-const chapterData = await fetch(`https://api.mangadex.org/manga/${id}/feed?translatedLanguage[]=en&includes[]=scanlation_group&includes[]=user`).then(res=>res.json())
+const chapterData = await fetch(`https://api.mangadex.org/manga/${id}/feed?order[chapter]=asc&translatedLanguage[]=en&includes[]=scanlation_group&includes[]=user`).then(res=>res.json())
 
 const data: MangaWithRelationship<'author' | 'artist' | 'cover_art'> = await fetch(
   `https://api.mangadex.org/manga/${id}?includes[]=author&includes[]=artist&includes[]=cover_art`
@@ -142,7 +142,12 @@ const themes = mangaAttributes.tags.filter((tag) => tag.attributes.group === 'th
           </div>
         </div>
         <p class="description">
-          {description}
+          {
+            description ?
+            description
+            :
+            <span>No description</span>
+          }
         </p>
         <div class="bottom">
           <div class="tabs">
@@ -159,7 +164,7 @@ const themes = mangaAttributes.tags.filter((tag) => tag.attributes.group === 'th
 </Layout>
 
 <script is:inline define:vars={{ cover, id }}>
-document.cookie=`lastVisited=${JSON.stringify({cover, id})}; path=/`
+document.cookie = `lastVisited=${JSON.stringify({ cover, id })}; path=/`
 </script>
 
 <style lang="scss">
@@ -196,6 +201,10 @@ document.cookie=`lastVisited=${JSON.stringify({cover, id})}; path=/`
     color: hsl(215, 14%, 34%);
     font-size: 1rem;
     font-weight: 400;
+    
+    span {
+      font-family: 'IBM Plex Mono', sans-serif;
+    }
   }
   
   .bottom {

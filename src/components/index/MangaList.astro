@@ -1,0 +1,59 @@
+---
+import MangaCard from './MangaCard.astro'
+
+const { data } = Astro.props
+---
+
+<div class="manga-list">
+  {
+    data.data.map((manga) => (
+      <MangaCard
+        author={manga.relationships[0].attributes.name}
+        artist={manga.relationships[1].attributes.name}
+        title={manga.attributes.title.en}
+        cover_url={`/image?url=https://uploads.mangadex.org/covers/${manga.id}/${
+          manga.relationships.find((rel) => rel.type === 'cover_art')!.attributes.fileName
+        }.256.jpg`}
+        tag={
+          manga.attributes.tags.filter((tag) => tag.attributes.group === 'genre')[0]
+            ?.attributes.name.en || 'Unknown'
+        }
+        id={manga.id}
+      />
+    ))
+  }
+</div>
+
+<nav>
+  <ul class="flex select-none items-center justify-between space-x-2 text-gray-700 sm:justify-center mt-10 mx-auto">
+{
+  [...Array(Math.floor(data.total / 20))].map((_, num) => {
+    return ( 
+      <li class="sm:block">
+        <a href={`/${num + 1}`} class="rounded-lg px-2.5 py-1 text-black bg-gray-50 font-semibold ring-1 ring-inset ring-gray-200  hover:bg-gray-50 decoration-none">{num + 1}</a> 
+      </li>
+  )})
+}
+  </ul>
+</nav>
+
+<style>
+  .manga-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8vw;
+    margin: 0 9.375vw;
+    margin-top: 2.08vw;
+
+    @media (width <= 768px) {
+      @apply grid grid-cols-2;
+    }
+  }
+  
+  a {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 600;
+  }
+</style>

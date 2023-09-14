@@ -454,6 +454,9 @@ export type MangaArray<T extends RelationshipList$1> = {
   result: string
   response: string
   data: (Omit<MangaContent, 'relationships'> & WithRelationships$1<T>)[]
+  limit: number
+  offset: number
+  total: number
 }
 interface FeedResponse {
   result: string
