@@ -47,7 +47,7 @@
 
   <div class="volume-container">
     {#each items as item}
-      <span class="volume">{item.volume ?? 'No Volume'}</span>
+      <span class="volume">{item.volume ? `Volume ${item.volume}` : 'No Volume'}</span>
       {#each item.chapters as chapter}
         <Chapter chapterData={chapter} />
       {/each}
