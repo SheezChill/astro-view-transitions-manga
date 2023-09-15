@@ -143,10 +143,9 @@ const themes = mangaAttributes.tags.filter((tag) => tag.attributes.group === 'th
         </div>
         <p class="description">
           {
-            description ?
-            description
-            :
-            <span>No description</span>
+            description 
+            ? description
+            : <span>No description</span>
           }
         </p>
         <div class="bottom">
@@ -160,7 +159,11 @@ const themes = mangaAttributes.tags.filter((tag) => tag.attributes.group === 'th
       </div>
     </div>
   </div>
-  <Chapters client:load chapterData={chapterData}/>
+  {
+    chapterData.data.length > 0
+    ? <Chapters client:load chapterData={chapterData}/>
+    : chapterData.total > 0 ? ( <div class="no-chapters">No chapters in current languages</div>  ): ( <div class="no-chapters">No chapters yet</div> )
+  }
 </Layout>
 
 <script is:inline define:vars={{ cover, id }}>
@@ -385,6 +388,12 @@ document.cookie = `lastVisited=${JSON.stringify({ cover, id })}; path=/`
         color: hsl(216, 12%, 84%);
       }
     }
+  }
+  
+  .no-chapters {
+    margin: 0 calc(9.375vw + 2.1vw + 16px + 12vw);
+    margin-top: 2.08vw;
+    font-family: 'IBM Plex Mono', sans-serif;
   }
 
   img {
