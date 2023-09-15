@@ -2,6 +2,7 @@
 import MangaCard from './MangaCard.astro'
 
 const { data } = Astro.props
+const { page } = Astro.params
 ---
 
 <div class="manga-list">
@@ -25,15 +26,24 @@ const { data } = Astro.props
 </div>
 
 <nav>
-  <ul class="flex select-none items-center justify-between space-x-2 text-gray-700 sm:justify-center mt-10 mx-auto">
-{
-  [...Array(Math.floor(data.total / 20))].map((_, num) => {
-    return ( 
-      <li class="sm:block">
-        <a href={`/${num + 1}`} class="rounded-lg px-2.5 py-1 text-black bg-gray-50 font-semibold ring-1 ring-inset ring-gray-200  hover:bg-gray-50 decoration-none">{num + 1}</a> 
-      </li>
-  )})
-}
+  <ul
+    class="flex select-none items-center justify-between space-x-2 text-gray-700 sm:justify-center mt-10 mx-auto"
+  >
+    {
+      [...Array(Math.floor(data.total / 20))].map((_, num) => {
+        return (
+          <li class="sm:block">
+            <a
+              href={`/${num + 1 === 1 ? '' : num + 1}`}
+              class="rounded-lg px-2.5 py-1 text-black bg-gray-50 font-semibold ring-1 ring-inset ring-gray-200  hover:bg-gray-50 hover:decoration-underline decoration-none"
+              class:list={{ 'text-red-500': num + 1 === Number(page) }}
+            >
+              {num + 1}
+            </a>
+          </li>
+        )
+      })
+    }
   </ul>
 </nav>
 
@@ -51,7 +61,7 @@ const { data } = Astro.props
       @apply grid grid-cols-2;
     }
   }
-  
+
   a {
     font-family: 'Source Sans Pro', sans-serif;
     font-weight: 600;
