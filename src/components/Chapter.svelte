@@ -5,7 +5,7 @@
 <div class="chapter">
   <div class="title-wrapper">
     <span class="chapter-num">
-      Chapter {chapterData.chapter}
+      {chapterData.chapter ? `Chapter ${chapterData.chapter}` : 'Oneshot'}
     </span>
     {#if chapterData.title}
       <span class="dot-separator">•</span>
