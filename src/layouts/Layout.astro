@@ -9,6 +9,8 @@ interface Props {
 const { title } = Astro.props
 
 Astro.response.headers.set('Cache-Control', 'no-cache')
+const hasLastPage = Astro.cookies.has('page')
+const lastPage = Astro.cookies.get('page')?.value
 ---
 
 <!doctype html>
@@ -63,7 +65,7 @@ Astro.response.headers.set('Cache-Control', 'no-cache')
     <meta name="generator" content={Astro.generator} />
     <ViewTransitions transition:animate={fade({ duration: '0.1s' })} fallback="none" />
     <title>{title}</title>
-    <script is:inline>
+    <script is:inline define:vars={{ lastPage }}>
       function setTheme() {
         const theme =
           localStorage.getItem('theme') ||
@@ -74,6 +76,10 @@ Astro.response.headers.set('Cache-Control', 'no-cache')
         document.documentElement.classList.add(theme)
       }
 
+      document.addEventListener('isPage', (e) => {
+        document.querySelector('#logo').href = e.detail ? '/' : `/${lastPage}`
+      })
+
       setTheme()
       document.addEventListener('astro:after-swap', setTheme)
     </script>
@@ -81,7 +87,11 @@ Astro.response.headers.set('Cache-Control', 'no-cache')
   <body>
     <div class="wrapper">
       <header>
-        <a href="/" class="decoration-none text-black font-bold text-[1.125rem]">
+        <a
+          href={`/${hasLastPage ? lastPage : ''}`}
+          id="logo"
+          class="decoration-none text-black font-bold text-[1.125rem]"
+        >
           Penis Reader™
         </a>
         <a href="/settings" class="w-8 h-8 rounded-[50%] bg-testing"></a>

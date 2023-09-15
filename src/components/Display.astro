@@ -2,11 +2,13 @@
 const lastVisitedCookie = Astro.cookies.get('lastVisited')?.json()
 const id = lastVisitedCookie?.id
 const cover = lastVisitedCookie?.cover
+
+const page = Astro.cookies.get('page')?.value
 ---
 
 {
   lastVisitedCookie && (
-    <a href={`/manga/${id}`}>
+    <a id="back-link" href={`/manga/${id}`}>
       <img
         transition:name={`cover-${id}`}
         src={cover}
@@ -16,6 +18,12 @@ const cover = lastVisitedCookie?.cover
     </a>
   )
 }
+
+<script is:inline define:vars={{ page }}>
+  document.querySelector('#back-link').addEventListener('click', () => {
+    history.replaceState({}, '', `${window.location.origin}/${page ? page : ''}`)
+  })
+</script>
 
 <style>
   img {

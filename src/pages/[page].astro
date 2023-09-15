@@ -6,6 +6,10 @@ import type { MangaArray } from '../mdapi'
 
 const { page } = Astro.params
 
+if (typeof Number(page) !== 'number' || Number(page) <= 1) {
+  return Astro.redirect('/')
+}
+
 const PAGE = parseInt(page!) > 0 ? parseInt(page!) - 1 : 1
 
 const oneDayMilliseconds = 1000 * 3600 * 24
@@ -25,6 +29,12 @@ const data: MangaArray<'author' | 'artist' | 'cover_art'> = await fetch!(
   <MangaList data={data} />
 </Layout>
 
-<script is:inline>
+<script is:inline define:vars={{ page }}>
   document.cookie = 'lastVisited=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+  document.cookie = `page=${page.toString()}; path=/;`
+  document.dispatchEvent(
+    new CustomEvent('isPage', {
+      detail: true
+    })
+  )
 </script>
