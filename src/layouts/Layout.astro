@@ -84,13 +84,13 @@ const lastPage = Astro.cookies.get('page')?.value
       document.addEventListener('astro:after-swap', setTheme)
     </script>
   </head>
-  <body>
+  <body class="bg-background">
     <div class="wrapper">
       <header>
         <a
           href={`/${hasLastPage ? lastPage : ''}`}
           id="logo"
-          class="decoration-none text-black font-bold text-[1.125rem]"
+          class="decoration-none text-text font-bold text-[1.125rem]"
         >
           Penis Reader™
         </a>
@@ -112,9 +112,8 @@ const lastPage = Astro.cookies.get('page')?.value
         width: 100%;
         height: 4rem;
         align-items: center;
-        border-bottom: rgb(243 244 246) solid 1px;
 
-        @apply flex flex-row justify-between px-[10.2vw] box-border;
+        @apply flex flex-row justify-between px-[10.2vw] box-border border-b border-b-solid border-border;
       }
     </style>
     <style lang="scss" is:global>

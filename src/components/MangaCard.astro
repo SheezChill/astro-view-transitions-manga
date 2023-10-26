@@ -9,7 +9,7 @@ const { author, artist, cover_url, title, id, tag } = Astro.props
       {author}, {artist}
       <span>/</span>
     </h1>
-    <h1 transition:name={`title-${id}`}>{title}</h1>
+    <h1 class="text-text" transition:name={`title-${id}`}>{title}</h1>
   </div>
   <div class="tag">
     <svg

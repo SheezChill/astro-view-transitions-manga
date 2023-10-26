@@ -27,13 +27,13 @@ const myFade: TransitionDirectionalAnimations = {
 <Layout title="Settings">
   <div class="container" transition:animate={myFade}>
     <h1>Settings</h1>
-    <span>theme settings here</span>
+    <h2>Theme</h2>
+    <Display />
   </div>
-  <Display />
-</Layout>
 
-<style lang="scss">
-  .container {
-    @apply flex flex-col mx-[10.2vw];
-  }
-</style>
+  <style lang="scss">
+    .container {
+      @apply flex flex-col mx-[10.2vw];
+    }
+  </style>
+</Layout>

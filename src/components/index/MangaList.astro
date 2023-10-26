@@ -27,16 +27,22 @@ const { page } = Astro.params
 
 <nav>
   <ul
-    class="flex select-none items-center justify-between space-x-2 text-gray-700 sm:justify-center mt-10 mx-auto"
+    class="flex select-none items-center justify-between space-x-2 sm:justify-center mt-10 mx-auto"
   >
     {
       [...Array(Math.floor(data.total / 20))].map((_, num) => {
+        const isCurrentPage =
+          (page === undefined && num + 1 === 1) || num + 1 === Number(page)
+
         return (
           <li class="sm:block">
             <a
               href={`/${num + 1 === 1 ? '' : num + 1}`}
-              class="rounded-lg px-2.5 py-1 text-black bg-gray-50 font-semibold ring-1 ring-inset ring-gray-200  hover:bg-gray-50 hover:decoration-underline decoration-none"
-              class:list={{ 'text-red-500': num + 1 === Number(page) }}
+              class="rounded-lg px-2.5 py-1 bg-secondary font-semibold ring-1 ring-inset ring-border  hover:bg-background hover:decoration-underline decoration-none"
+              class:list={{
+                'text-text': !isCurrentPage,
+                'text-red-500': isCurrentPage
+              }}
             >
               {num + 1}
             </a>

@@ -3,13 +3,18 @@ const { author, artist, cover_url, title, id, tag } = Astro.props
 ---
 
 <a class="manga-card" href={`/manga/${id}`}>
-  <img src={cover_url} alt="manga cover" transition:name={`cover-${id}`} />
+  <img
+    class="dark-brightness-85"
+    src={cover_url}
+    alt="manga cover"
+    transition:name={`cover-${id}`}
+  />
   <div class="title">
     <h1 transition:name={`creators-${id}`}>
       {author}, {artist}
       <span>/</span>
     </h1>
-    <h1 transition:name={`title-${id}`}>{title}</h1>
+    <h1 class="text-text" transition:name={`title-${id}`}>{title}</h1>
   </div>
   <div class="tag">
     <svg
@@ -100,7 +105,6 @@ const { author, artist, cover_url, title, id, tag } = Astro.props
           size: 0.75rem;
           weight: 600;
         }
-        color: black;
       }
     }
 
@@ -110,9 +114,9 @@ const { author, artist, cover_url, title, id, tag } = Astro.props
       align-items: center;
       padding: 0 0.5rem;
       width: fit-content;
-      border: #f3f4f6 solid 1px;
-      border-radius: 999px;
       gap: 8px;
+
+      @apply border rounded border-solid border-border bg-secondary;
 
       span {
         font-size: clamp(0.625rem, 0.73vw, 0.875rem);
